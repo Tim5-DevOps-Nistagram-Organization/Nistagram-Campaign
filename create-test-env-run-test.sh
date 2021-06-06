@@ -31,7 +31,3 @@ while ! is_finished nistagram-campaign-microservice; do sleep 20; done
 # provera Quality Gate-a i da li je neki od testova pao
 servers_logs=$(docker logs nistagram-campaign --tail 20)
 python ./sonar-maven-breaker.py --testLogs "${servers_logs}" --projectKey ${SONAR_PROJ_KEY_SVC}  --pullRequestNumber ${pullKey} --branch ${branch}
-
-
-
-
