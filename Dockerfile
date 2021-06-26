@@ -3,9 +3,15 @@ ARG STAGE=test
 WORKDIR /usr/src/server
 COPY . .
 
-FROM maven:3.8.1-jdk-11  AS nistagramCampaignMicroserviceBuild
+
+
+FROM maven:3.8.1-jdk-11 AS nistagramCampaignMicroserviceBuild
 ARG STAGE=dev
 WORKDIR /usr/src/server
+# pokusaj da se odvoji dobaljvanje zavisnosti u poseban sloj kako se ne bi dobavljale sve svaki put
+# kad se menj samo kod
+#COPY pom.xml /tmp/pom.xml
+#RUN mvn -B -f /tmp/pom.xml -s /usr/share/maven/ref/settings-docker.xml dependency:resolve
 COPY . .
 RUN mvn package -Pdev -DskipTests
 
