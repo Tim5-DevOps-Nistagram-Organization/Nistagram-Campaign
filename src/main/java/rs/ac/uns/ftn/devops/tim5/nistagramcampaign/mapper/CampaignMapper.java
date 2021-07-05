@@ -6,6 +6,7 @@ import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.model.Advertisement;
 import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.model.Campaign;
 import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.model.enums.CampaignEnum;
 
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -23,6 +24,12 @@ public class CampaignMapper {
 
         if (requestDTO.getEndDate() != null && requestDTO.getNumShowsPerDay() > 1) {
             campaignType = CampaignEnum.MULTIPLE;
+        }
+        // if SINGLE campaign then end date is tomorrow
+        if (requestDTO.getEndDate() == null) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            requestDTO.setEndDate(calendar.getTime());
         }
         return new Campaign(null, advertisements,
                             requestDTO.getStartDate(), requestDTO.getEndDate(),
