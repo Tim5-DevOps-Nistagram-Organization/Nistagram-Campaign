@@ -60,6 +60,15 @@ public class CampaignController {
         return new ResponseEntity<>(retVal, HttpStatus.OK);
     }
 
+    @GetMapping(path="/active/{agentUsername}")
+    public ResponseEntity<Collection<CampaignDTO>> getAllActiveByAgent(@PathVariable String agentUsername) {
+        Collection<CampaignDTO> retVal =
+                campaignService.getAllActiveByAgent(agentUsername)
+                        .stream().map(camp -> CampaignMapper.toDTO(camp))
+                        .collect(Collectors.toList());
+        return new ResponseEntity<>(retVal, HttpStatus.OK);
+    }
+
     @DeleteMapping(path = "/{campaignId}")
     @PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_AGENT')")
     public ResponseEntity<String> delete(@Valid @PathVariable Long campaignId) throws ResourceNotFoundException {

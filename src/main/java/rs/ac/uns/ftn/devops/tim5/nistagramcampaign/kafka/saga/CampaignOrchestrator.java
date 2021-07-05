@@ -7,8 +7,11 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.kafka.Constants;
+import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.mapper.AdvertisementMapper;
 import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.model.Campaign;
 import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.model.kafka.CampaignMessage;
+
+import java.util.stream.Collectors;
 
 
 @Service
@@ -32,7 +35,12 @@ public class CampaignOrchestrator {
         } else {
             message = new CampaignMessage(Constants.SEARCH_TOPIC, Constants.CAMPAIGN_ORCHESTRATOR_TOPIC,
                     action, campaign.getId(), campaign.getStartDate(), campaign.getEndDate(),
-                    campaign.getNumShowsPerDay(), campaign.getType(), campaign.getAgentUsername());
+                    campaign.getNumShowsPerDay(), campaign.getType(), campaign.getAgentUsername(),
+                    campaign.getAdvertisements()
+                            .stream()
+                            .map(t-> AdvertisementMapper.toDTO(t))
+                            .collect(Collectors.toList())
+            );
         }
         this.kafkaTemplate.send(message.getTopic(), gson.toJson(message));
     }

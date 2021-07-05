@@ -9,6 +9,7 @@ import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.repository.CampaignRepository
 import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.service.CampaignService;
 
 import java.util.Collection;
+import java.util.Date;
 
 @Service
 public class CampaignServiceImpl implements CampaignService {
@@ -45,5 +46,10 @@ public class CampaignServiceImpl implements CampaignService {
     @Override
     public Collection<Campaign> getAllMultipleByAgent(String agentUsername) {
         return campaignRepository.getAllByTypeAndAgent(CampaignEnum.MULTIPLE, agentUsername);
+    }
+
+    @Override
+    public Collection<Campaign> getAllActiveByAgent(String agentUsername) {
+        return campaignRepository.getAllActiveByAgent(agentUsername, new Date(), new Date());
     }
 }

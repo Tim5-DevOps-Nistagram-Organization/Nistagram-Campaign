@@ -7,10 +7,17 @@ import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.model.Campaign;
 import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.model.enums.CampaignEnum;
 
 import java.util.Collection;
+import java.util.Date;
 
 @Repository
 public interface CampaignRepository extends JpaRepository<Campaign, Long> {
 
     @Query("SELECT r FROM Campaign r WHERE r.type = ?1 AND r.agentUsername = ?2")
     Collection<Campaign> getAllByTypeAndAgent(CampaignEnum type, String agent);
+
+
+    @Query("SELECT r FROM Campaign r WHERE r.agentUsername = ?1 AND r.startDate <= ?2 AND r.endDate >= ?3")
+    Collection<Campaign> getAllActiveByAgent(String agent, Date startTime, Date endTime);
+
+
 }
