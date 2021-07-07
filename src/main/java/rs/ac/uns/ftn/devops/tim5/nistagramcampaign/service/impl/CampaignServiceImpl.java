@@ -4,7 +4,6 @@ import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.model.Campaign;
-import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.model.enums.CampaignEnum;
 import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.repository.CampaignRepository;
 import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.service.CampaignService;
 
@@ -14,7 +13,7 @@ import java.util.Date;
 @Service
 public class CampaignServiceImpl implements CampaignService {
 
-    private CampaignRepository campaignRepository;
+    private final CampaignRepository campaignRepository;
 
     @Autowired
     public CampaignServiceImpl(CampaignRepository campaignRepository) {
@@ -24,7 +23,7 @@ public class CampaignServiceImpl implements CampaignService {
 
     @Override
     public Campaign findById(Long id) throws ResourceNotFoundException {
-        return campaignRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Campaign"));
+        return campaignRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Campaign"));
     }
 
     @Override
@@ -34,18 +33,8 @@ public class CampaignServiceImpl implements CampaignService {
     }
 
     @Override
-    public void delete(Long id) throws ResourceNotFoundException{
+    public void delete(Long id) throws ResourceNotFoundException {
         campaignRepository.delete(this.findById(id));
-    }
-
-    @Override
-    public Collection<Campaign> getAllSingleByAgent(String agentUsername) {
-        return campaignRepository.getAllByTypeAndAgent(CampaignEnum.SINGLE, agentUsername);
-    }
-
-    @Override
-    public Collection<Campaign> getAllMultipleByAgent(String agentUsername) {
-        return campaignRepository.getAllByTypeAndAgent(CampaignEnum.MULTIPLE, agentUsername);
     }
 
     @Override

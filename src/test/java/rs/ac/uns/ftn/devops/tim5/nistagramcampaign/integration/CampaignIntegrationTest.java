@@ -6,11 +6,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.constants.AdvertismentConstants;
+import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.constants.AdvertisementConstants;
 import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.constants.CampaignConstants;
 import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.constants.UserConstants;
 import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.dto.AdvertisementDTO;
@@ -20,10 +18,7 @@ import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.model.Campaign;
 import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.model.enums.CampaignEnum;
 import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.service.CampaignService;
 
-
 import javax.transaction.Transactional;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
@@ -37,16 +32,13 @@ import static org.junit.Assert.assertNotNull;
 public class CampaignIntegrationTest {
 
     @Autowired
-    private TestRestTemplate restTemplate;
-
-    @Autowired
     private CampaignService campaignService;
 
     /*
-    *  Method test multiple Campaign creation
-    *
-    *
-    * */
+     *  Method test multiple Campaign creation
+     *
+     *
+     * */
     @Test
     public void testCreateCampaignMultiple_Success() {
 
@@ -57,9 +49,9 @@ public class CampaignIntegrationTest {
 
         Date END_DATE = calendar.getTime();
 
-        AdvertisementDTO a = new AdvertisementDTO(AdvertismentConstants.WEB_SITE_URL, AdvertismentConstants.MEDIA_ID);
+        AdvertisementDTO a = new AdvertisementDTO(AdvertisementConstants.WEB_SITE_URL, AdvertisementConstants.MEDIA_ID);
 
-        CampaignDTO campaignDTO = new CampaignDTO(new ArrayList<>(Arrays.asList(a)),
+        CampaignDTO campaignDTO = new CampaignDTO(new ArrayList<>(Collections.singletonList(a)),
                 START_DATE, END_DATE, CampaignConstants.NUM_SHOWS_PER_DAY_MULTIPLE);
         Campaign campaign = campaignService.create(CampaignMapper.toEntity(campaignDTO), UserConstants.USERNAME1);
 
@@ -80,9 +72,9 @@ public class CampaignIntegrationTest {
 
         Date START_DATE = new Date();
 
-        AdvertisementDTO a = new AdvertisementDTO(AdvertismentConstants.WEB_SITE_URL, AdvertismentConstants.MEDIA_ID);
+        AdvertisementDTO a = new AdvertisementDTO(AdvertisementConstants.WEB_SITE_URL, AdvertisementConstants.MEDIA_ID);
 
-        CampaignDTO campaignDTO = new CampaignDTO(new ArrayList<>(Arrays.asList(a)),
+        CampaignDTO campaignDTO = new CampaignDTO(new ArrayList<>(Collections.singletonList(a)),
                 START_DATE, null, CampaignConstants.NUM_SHOWS_PER_DAY_SINGLE);
         Campaign campaign = campaignService.create(CampaignMapper.toEntity(campaignDTO), UserConstants.USERNAME1);
 
@@ -101,15 +93,15 @@ public class CampaignIntegrationTest {
      *
      * */
     @Test
-    public void testGetAllActiveByAgent_Success() throws URISyntaxException {
+    public void testGetAllActiveByAgent_Success() {
 
         Date START_DATE = new Date();
 
-        AdvertisementDTO a = new AdvertisementDTO(AdvertismentConstants.WEB_SITE_URL, AdvertismentConstants.MEDIA_ID);
+        AdvertisementDTO a = new AdvertisementDTO(AdvertisementConstants.WEB_SITE_URL, AdvertisementConstants.MEDIA_ID);
 
-        CampaignDTO campaignDTO = new CampaignDTO(new ArrayList<>(Arrays.asList(a)),
+        CampaignDTO campaignDTO = new CampaignDTO(new ArrayList<>(Collections.singletonList(a)),
                 START_DATE, null, CampaignConstants.NUM_SHOWS_PER_DAY_SINGLE);
-        Campaign campaign = campaignService.create(CampaignMapper.toEntity(campaignDTO), UserConstants.USERNAME1);
+        campaignService.create(CampaignMapper.toEntity(campaignDTO), UserConstants.USERNAME1);
 
 
         // multiple campaign but not active
@@ -120,14 +112,14 @@ public class CampaignIntegrationTest {
         calendar.add(Calendar.DAY_OF_MONTH, -20);
         Date END_DATE = calendar.getTime();
 
-        campaignDTO = new CampaignDTO(new ArrayList<>(Arrays.asList(a)),
+        campaignDTO = new CampaignDTO(new ArrayList<>(Collections.singletonList(a)),
                 START_DATE1, END_DATE, CampaignConstants.NUM_SHOWS_PER_DAY_MULTIPLE);
-        campaign = campaignService.create(CampaignMapper.toEntity(campaignDTO), UserConstants.USERNAME1);
+        campaignService.create(CampaignMapper.toEntity(campaignDTO), UserConstants.USERNAME1);
 
         Collection<Campaign> retVal = campaignService.getAllActiveByAgent(UserConstants.USERNAME1);
 
-        assertEquals(1 ,retVal.size());
-        Campaign cmpg = retVal.stream().findFirst().get();
+        assertEquals(1, retVal.size());
+        Campaign cmpg = retVal.stream().findFirst().orElse(new Campaign());
 
         assertEquals(CampaignConstants.NUM_SHOWS_PER_DAY_SINGLE, cmpg.getNumShowsPerDay());
         assertEquals(START_DATE, cmpg.getStartDate());
@@ -135,9 +127,6 @@ public class CampaignIntegrationTest {
 
 
     }
-
-
-
 
 
 }

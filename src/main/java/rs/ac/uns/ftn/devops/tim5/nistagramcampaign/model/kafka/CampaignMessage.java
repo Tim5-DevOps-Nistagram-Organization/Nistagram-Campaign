@@ -4,20 +4,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.dto.AdvertisementDTO;
-import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.model.Advertisement;
 import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.model.enums.CampaignEnum;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import java.util.Collection;
 import java.util.Date;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class CampaignMessage extends Message{
+public class CampaignMessage extends Message {
 
     private Long campaignId;
     private Date startDate;
