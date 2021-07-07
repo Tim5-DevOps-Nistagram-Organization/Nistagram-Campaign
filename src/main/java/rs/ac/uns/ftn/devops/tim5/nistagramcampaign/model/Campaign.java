@@ -39,7 +39,7 @@ public class Campaign {
 
     private String agentUsername;
 
-    public Campaign(Long id){
+    public Campaign(Long id) {
         this.id = id;
     }
 

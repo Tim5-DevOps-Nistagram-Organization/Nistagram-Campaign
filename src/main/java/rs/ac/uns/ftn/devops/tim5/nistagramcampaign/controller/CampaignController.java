@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.dto.CampaignDTO;
+import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.dto.CampaignDetailsDTO;
 import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.exception.ResourceNotFoundException;
 import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.kafka.Constants;
 import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.kafka.saga.CampaignOrchestrator;
@@ -23,8 +24,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/campaign")
 public class CampaignController {
 
-    private CampaignService campaignService;
-    private CampaignOrchestrator campaignOrchestrator;
+    private final CampaignService campaignService;
+    private final CampaignOrchestrator campaignOrchestrator;
 
     @Autowired
     public CampaignController(CampaignService campaignService,
@@ -33,40 +34,22 @@ public class CampaignController {
         this.campaignOrchestrator = campaignOrchestrator;
     }
 
-    @PostMapping( consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/active/{agentUsername}")
+    public ResponseEntity<Collection<CampaignDetailsDTO>> getAllActiveByAgent(@PathVariable String agentUsername) {
+        Collection<CampaignDetailsDTO> retVal =
+                campaignService.getAllActiveByAgent(agentUsername)
+                        .stream().map(CampaignMapper::toDTO)
+                        .collect(Collectors.toList());
+        return new ResponseEntity<>(retVal, HttpStatus.OK);
+    }
+
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ROLE_AGENT')")
     public ResponseEntity<String> create(@Valid @RequestBody CampaignDTO campaignRequestDTO,
-                                               Principal principal) {
+                                         Principal principal) {
         Campaign campaign = campaignService.create(CampaignMapper.toEntity(campaignRequestDTO), principal.getName());
         campaignOrchestrator.startSaga(campaign, Constants.START_ACTION);
         return new ResponseEntity<>("You successfully created campaign", HttpStatus.OK);
-    }
-
-    @GetMapping(path="/multiple/{agentUsername}")
-    public ResponseEntity<Collection<CampaignDTO>> getAllMultipleByAgent(@PathVariable String agentUsername) {
-        Collection<CampaignDTO> retVal =
-                campaignService.getAllMultipleByAgent(agentUsername)
-                        .stream().map(camp -> CampaignMapper.toDTO(camp))
-                        .collect(Collectors.toList());
-        return new ResponseEntity<>(retVal, HttpStatus.OK);
-    }
-
-    @GetMapping(path="/single/{agentUsername}")
-    public ResponseEntity<Collection<CampaignDTO>> getAllSingleByAgent(@PathVariable String agentUsername) {
-        Collection<CampaignDTO> retVal =
-                campaignService.getAllSingleByAgent(agentUsername)
-                        .stream().map(camp -> CampaignMapper.toDTO(camp))
-                        .collect(Collectors.toList());
-        return new ResponseEntity<>(retVal, HttpStatus.OK);
-    }
-
-    @GetMapping(path="/active/{agentUsername}")
-    public ResponseEntity<Collection<CampaignDTO>> getAllActiveByAgent(@PathVariable String agentUsername) {
-        Collection<CampaignDTO> retVal =
-                campaignService.getAllActiveByAgent(agentUsername)
-                        .stream().map(camp -> CampaignMapper.toDTO(camp))
-                        .collect(Collectors.toList());
-        return new ResponseEntity<>(retVal, HttpStatus.OK);
     }
 
     @DeleteMapping(path = "/{campaignId}")
@@ -77,6 +60,4 @@ public class CampaignController {
         campaignOrchestrator.startSaga(campaign, Constants.DELETE_ACTION);
         return new ResponseEntity<>("Campaign is successfully removed.", HttpStatus.OK);
     }
-
-
 }

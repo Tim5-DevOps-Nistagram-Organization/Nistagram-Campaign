@@ -3,7 +3,6 @@ package rs.ac.uns.ftn.devops.tim5.nistagramcampaign.kafka.saga;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.exception.ResourceNotFoundException;
 import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.kafka.Constants;
@@ -16,16 +15,11 @@ import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.service.CampaignService;
 public class Consumer {
 
     private final CampaignService campaignService;
-    private final KafkaTemplate<String, String> kafkaTemplate;
     private final Gson gson;
 
     @Autowired
-    public Consumer(
-                    KafkaTemplate<String, String> kafkaTemplate,
-                    Gson gson,
-                    CampaignService campaignService
-                    ) {
-        this.kafkaTemplate = kafkaTemplate;
+    public Consumer(Gson gson, CampaignService campaignService
+    ) {
         this.gson = gson;
         this.campaignService = campaignService;
     }

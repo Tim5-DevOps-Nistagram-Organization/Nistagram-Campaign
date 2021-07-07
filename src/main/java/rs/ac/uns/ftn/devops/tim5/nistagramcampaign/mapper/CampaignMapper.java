@@ -2,6 +2,7 @@ package rs.ac.uns.ftn.devops.tim5.nistagramcampaign.mapper;
 
 import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.dto.AdvertisementDTO;
 import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.dto.CampaignDTO;
+import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.dto.CampaignDetailsDTO;
 import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.model.Advertisement;
 import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.model.Campaign;
 import rs.ac.uns.ftn.devops.tim5.nistagramcampaign.model.enums.CampaignEnum;
@@ -12,12 +13,13 @@ import java.util.stream.Collectors;
 
 public class CampaignMapper {
 
-    private CampaignMapper() {}
+    private CampaignMapper() {
+    }
 
     public static Campaign toEntity(CampaignDTO requestDTO) {
         Collection<Advertisement> advertisements =
                 requestDTO.getAdvertisements()
-                        .stream().map(entity-> AdvertisementMapper.toEntity(entity))
+                        .stream().map(AdvertisementMapper::toEntity)
                         .collect(Collectors.toList());
 
         CampaignEnum campaignType = CampaignEnum.SINGLE;
@@ -32,16 +34,16 @@ public class CampaignMapper {
             requestDTO.setEndDate(calendar.getTime());
         }
         return new Campaign(null, advertisements,
-                            requestDTO.getStartDate(), requestDTO.getEndDate(),
-                            requestDTO.getNumShowsPerDay(), campaignType, null);
+                requestDTO.getStartDate(), requestDTO.getEndDate(),
+                requestDTO.getNumShowsPerDay(), campaignType, null);
     }
 
-    public static CampaignDTO toDTO(Campaign campaign) {
+    public static CampaignDetailsDTO toDTO(Campaign campaign) {
         Collection<AdvertisementDTO> advertisements =
                 campaign.getAdvertisements()
-                        .stream().map(entity-> AdvertisementMapper.toDTO(entity))
+                        .stream().map(AdvertisementMapper::toDTO)
                         .collect(Collectors.toList());
-        return new CampaignDTO(advertisements,
+        return new CampaignDetailsDTO(campaign.getId(), advertisements,
                 campaign.getStartDate(),
                 campaign.getEndDate(),
                 campaign.getNumShowsPerDay());

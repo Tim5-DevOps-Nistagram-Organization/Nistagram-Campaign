@@ -5,11 +5,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class AdvertisementDTO {
+    @NotNull(message = "Website Url can not be null")
+    @NotBlank(message = "Website Url can not be blank")
     private String websiteUrl;
-    private String mediaId;
+
+    @NotNull(message = "Media can not be null")
+    private Long mediaId;
 }

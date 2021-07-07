@@ -28,7 +28,7 @@ public class CampaignOrchestrator {
 
     @Async
     public void startSaga(Campaign campaign, String action) {
-        CampaignMessage message = null;
+        CampaignMessage message;
         if (action.equals(Constants.DELETE_ACTION)) {
             message = new CampaignMessage(Constants.SEARCH_TOPIC, Constants.CAMPAIGN_ORCHESTRATOR_TOPIC,
                     action, campaign.getId());
@@ -38,7 +38,7 @@ public class CampaignOrchestrator {
                     campaign.getNumShowsPerDay(), campaign.getType(), campaign.getAgentUsername(),
                     campaign.getAdvertisements()
                             .stream()
-                            .map(t-> AdvertisementMapper.toDTO(t))
+                            .map(AdvertisementMapper::toDTO)
                             .collect(Collectors.toList())
             );
         }
